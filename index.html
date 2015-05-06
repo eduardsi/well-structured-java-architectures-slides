@@ -12,7 +12,10 @@
 
       body { 
         font-family: 'Yanone Kaffeesatz';
-        color: #fff;
+      }
+
+      .remark-slide-content {
+                color: #fff;
       }
       
       h1, h2, h3 {
@@ -164,6 +167,14 @@
       .hljs-default .hljs {
         background-color: white;
       }
+
+      .mark h2 {
+        color: #2c5886;
+      }
+
+      .mark h2 strong {
+        color: white;
+      }      
     </style>
   </head>
   <body>
@@ -211,12 +222,19 @@ background-image: url(shit.png)
 ## - Needless Repitition
 ]
 ???
+
+- A normal change is harder to employ than a hack (WTF code, too many dependencies)
+- You drag a package and the rest of the system with it.
+- People just leave your project :-)
+- 
+
+
 Rigidity (стойкость) – изменение аффектит слишком много зависимостей (МНОГО ЗАВИСИМОСТЕЙ ОТ МОДУЛЯ)
 Fragility (хрупкость) – поломка в разных местах без конфептуальной связи
 Immobility (немобильность, тяжеловесность) – невозможность зареюзать компоненты, хвост зависимостей, сложно сделать декомпозицию (МНОГО ТЯНЕТ ЗА СОБОЙ КУЧУ)
-Viscosity (вязкость) – when normal change is harder to employ than hack due to design (not clear wtf) or environment (compilation 1H)
+Viscosity (вязкость) – when normal change is harder to employ than hack due to design (not clear wtf) or environment (compilation 1H). Once you deliver good thing, eat gets eaten by bad code.
 Opacity – не понятна суть и предназначение артифакта, взаимосвязи
-Needless Complexity – чтобы сделать что-нибудь, приходится городить
+Needless Complexity – чтобы сделать что-нибудь, приходится городить лажу
 Needless Repetition – один и тот же функционал в разных кодовых проявлениях
 
 
@@ -224,6 +242,10 @@ Needless Repetition – один и тот же функционал в разн
 class: nopadding
 background-image: url(hibernate.png)
 ### .spanny[Hibernate Core v4.3.8.Final]
+???
+- All aforementioned problems visualised (Big Ball of Mud, everything is interconneted, structure is completely ad-hoc). 
+- No guidelines , you really have to understand everything together. WHERE TO PUT NEW CONCEPT?
+- Visual thinking is very effective. Visual relationship must be obvious and occurate, otheriwse I have to go back and forth to understand the idea. You can’t build simple mental model (to base your assumptions upon) with spaghetti structure. 
 
 ---
 class: nopadding, whitebg
@@ -231,7 +253,7 @@ background-image: url(jdk7.png)
 ### .spanny[JDK v1.7.0_51]
 
 ---
-class: quote-author
+class: quote-author, mark
 > ## **A JDK code base is deeply interconnected** at both the API and the implementation levels, having been built over many years primarily in the style of a monolithic software system. We’ve spent considerable effort eliminating or at least simplifying as many API and implementation dependences as possible, so that both the Platform and its implementations can be presented as a coherent set of interdependent modules, but some particularly thorny cases remain. 
 >### (c) Mark Reinholds, Chief Architect of the Java Platform
 
@@ -252,6 +274,9 @@ More 12.5 years of successful framework evolution without big-bang rewrites. I w
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(box.jpg)
 # Package is the **first-class citizen** and key element of logical design. 
+???
+- It's not just a box where you put random stuff. Package is a first-class element that represents some concept of your design.
+- When you design classes you normally about their responsibilities, interface, collaborators. 
 
 ---
 class: blackbg
@@ -270,8 +295,9 @@ io.shwitter.timeline
 ???
 - Being Related != Part of
 - Packages under Client can be tightly coupled. With an API around.
--  An Aggregate Root with aggregates + functions
+- An Aggregate Root with aggregates + functions
 - Or a Bounded context, for example.
+- Exercise that leads to surprising resuts: look @ your structure, find random package and ask: is the package part of its parent. Most packages do not really conform to the rule.
 
 
 
@@ -334,6 +360,8 @@ io.shwitter.domain
 io.shwitter.services
 io.shwitter.exceptions
 </pre>
+???
+Screaming architecture :)
 
 ---
 class: packages
@@ -433,13 +461,10 @@ io.shwitter.timeline
 **User**, **UserDAO**, **UserController**...
 </pre>&nbsp;
 ???
-It’s not about slices-first/layers-first fighting. It’s about grouping artifacts that are closely related.
-“DDD” packaging
-Functional components are not visible at all. How to find relations between functional items. “What if I add this, how would it impact my functionality”?
-What should I do to extract functionality into a separate module? 
-FAT is high that will force you to break logical module into functional. Then you’ll end up with mess managing this layering.
-Ok, provide API on top.
-POSMOTRI SA ANTI-PATTERNS ZAODNO.
+- Prefer FUNCTIONAL COHESION over LOGICAL COHESION.
+- Functional components are not visible at all. How to find relations between functional items? Let's say, what does it take to move Timelines to a separate micro-service?
+- Discovery cost (Bug is within Timelines -> go to timeline. Don't have to collect all parts of Timeline by jumping among packages)
+- Comprehensibility (should study one thing at a time. Do you want to study all DAOs or Timeline?)
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(chain.jpg)
@@ -448,23 +473,32 @@ background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(c
 ???
 Shotgun surgery instead of localized changes (imagine I move user somewhere). 
 Imagine I put a class that changes frequently into unrelated package. It will change every time as well!
+- I go here I go there.
+- Feel comfortable when you see boundary around my changes.
+- GO AND CHANGE ALL THE REPOSITORSI! NO!
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(escape.jpg)
-# Make sure artifacts do not escape.
+# Make sure artifacts are put in the right places and do not escape.
+???
+- Structure design
+- Structure review
+- Even in "perfect design", artifacts tend to escape their packages due to human mistakes, time pressure, whataever, so you need tooling.
 
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(waste.gif)
 # Make packages highly cohesive by following Single Responsibility Principle.
+???
+- Prefer having a lot of small cohesive packages are better than a bunch of big packages (FLEXIBILITY)
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(rope.jpg)
 # Keep packages loosely coupled, ideally – completely independent. Reflection doesn’t count.
 ???
-I gain portability!!!
-For example, when mapping relationships, map using ID instead of Entity.
-Independence – talk to as few as possible. We become mobile, don’t care about incoming/outgoing dependencies
+- I gain portability!!! (you can move packages easily -> less afferent/efferent coupling)
+- Reflection - by making dependnecy explicit you DECOUPLE components.
+- For example, when mapping relationships, map using ID instead of Entity.
 
 ---
 class: packages
@@ -505,29 +539,36 @@ class: packages
     @Embedded UserId userId;
   }
 ```
+???
+- Two concepts now are deeply connected. Now I can overuse User in timeline context.
+- Embeddable are important! Not just LONG. We still want to make sure relationship is visible.
+
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(iceberg.jpg)
 # Provide slim package interface and hide implementation details.
 ???
 Be conservative in what you expose.
+Make classes package-private (@Component)
 Introduce factories that hide implementations (Dependency Injection, Service Locators etc.)
-Make @Components package-private
 Separate “api” from “internal” packages and restrict access to “internal”
-Make sure “internal” depends on “api”, not opposite.
 Murphy’s law on being conservative exposers: if programmer can, he will (don’t expose Client to others). From the other hand, it’s more complex + refactoring is supported within app. So doesn’t make sense.
+
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(magnets.png)
 # Avoid dependency magnets. Sometimes duplication is not that evil.
 ???
-E.g. Client is used everywhere! Consider creating different clients. Ideally client can have different forms: Visitor, Client, Lender… 
-Break client into smaller parts
-Abstract if there is chance that client code will have different cadence (out of release scope)
+- Utilities (they tend to grow and become not as generic as they intented to be). 
+- Utilities (different teams using the same utilities - diff coding styles, diff library versions, different vision)
+E.g. Client is used everywhere! Consider creating different representations of client. Ideally client can have different forms: Visitor, Follower, Followee, Commenter, Recipient... and you pass representations to the right place.
+Break client into smaller parts.
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(arrows.png)
 # Manage relationships. Every dependency arrow has a reason. 
+???
+Let's look at FindBugs evolution which didn't care much about 
 
 ---
 class: nopadding, whitebg, findbugs
@@ -543,6 +584,8 @@ class: nopadding, whitebg, findbugs
 class: nopadding, whitebg, findbugs
 ## .spanny[Findbugs V1.2 – Imperfection takes hold]
 ![](findbugs12.png)
+???
+More time should be spent on understanding the problem and fixing it.
 
 ---
 class: nopadding, whitebg, findbugs
@@ -553,12 +596,17 @@ class: nopadding, whitebg, findbugs
 class: nopadding, whitebg, findbugs
 ## .spanny[Findbugs V1.4 – Explosion]
 ![](findbugs14.png)
+???
+- Since Findbugs is relatively simple and monotone tool, consequenes are not dangerous.
+- If you work on imporatant application which need to evolve fast and predictivly - you can get into serious troubles.
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(tailchase.jpg)
 # The dependencies between packages must not form cycles. Burn bi-directional dependences in fire. 
 ???
-Visual thinking is very effective. Visual relationship must be obvious and occurate, otheriwse I have to go back and forth to understand the idea. You can’t build simple mental model because arrows go to both directions.
+- If there is a bi-di dependency, I treat it as one whole. If it's is one whole, I keep things TOGETHER.
+-
+
 ---
 # How?
 
@@ -822,14 +870,6 @@ interface EmailHolder  {
 ```
 ![](demotion2.png)
 
-
-
-???
-Reasons:
-No guidelines for developers.
-Unable to simply extract: unable to “levelize” to see what to physically extract for build parallelization
-
-
 ---
 # Tools
 
@@ -881,6 +921,7 @@ background-image: url(veripacks.png)
 ???
 Java doesn’t have packages. Package is self-contained unit with a boundaries. Java has only namespaces which leads to insane amount of coupling.
 
+
 ---
 background-image: url(s101.png)
 
@@ -910,14 +951,8 @@ class: more
 
 ---
 class: quote-author
-> # Either you work to create a company culture or you don't. Either way a culture will emerge.
->## (c) Martin Linkhorst
-
-
----
-class: quote-author
 > # Either you work to create a software structure or you don't. Either way a structure will emerge.
->## (c) Eduards Sizovs
+>## @eduardsi
 
 ---
 class: nopadding, center, middle, thanks
