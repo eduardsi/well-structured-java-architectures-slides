@@ -223,19 +223,20 @@ background-image: url(shit.png)
 ]
 ???
 
-- A normal change is harder to employ than a hack (WTF code, too many dependencies)
+- A normal change is harder to employ than a hack (WTF code, blast radius is too big). Once you employ a good change, it's eaten by BBOM.
 - You drag a package and the rest of the system with it.
+- Reuse is very problematic (too many dependencies, sometimes they are not visible)
 - People just leave your project :-)
-- 
+___
 
 
-Rigidity (стойкость) – изменение аффектит слишком много зависимостей (МНОГО ЗАВИСИМОСТЕЙ ОТ МОДУЛЯ)
-Fragility (хрупкость) – поломка в разных местах без конфептуальной связи
-Immobility (немобильность, тяжеловесность) – невозможность зареюзать компоненты, хвост зависимостей, сложно сделать декомпозицию (МНОГО ТЯНЕТ ЗА СОБОЙ КУЧУ)
-Viscosity (вязкость) – when normal change is harder to employ than hack due to design (not clear wtf) or environment (compilation 1H). Once you deliver good thing, eat gets eaten by bad code.
-Opacity – не понятна суть и предназначение артифакта, взаимосвязи
-Needless Complexity – чтобы сделать что-нибудь, приходится городить лажу
-Needless Repetition – один и тот же функционал в разных кодовых проявлениях
+- Rigidity – изменение аффектит слишком много зависимостей (МНОГО ЗАВИСИМОСТЕЙ ОТ МОДУЛЯ)
+- Fragility – поломка в разных местах без конфептуальной связи
+- Immobility – невозможность зареюзать компоненты, хвост зависимостей, сложно сделать декомпозицию (МНОГО ТЯНЕТ ЗА СОБОЙ КУЧУ)
+- Viscosity – when normal change is harder to employ than hack due to design (not clear wtf) or environment (compilation 1H). Once you deliver good thing, eat gets eaten by bad code.
+- Opacity – не понятна суть и предназначение артифакта, взаимосвязи
+- Needless Complexity – чтобы сделать что-нибудь, приходится городить лажу
+- Needless Repetition – один и тот же функционал в разных кодовых проявлениях
 
 
 ---
@@ -244,8 +245,7 @@ background-image: url(hibernate.png)
 ### .spanny[Hibernate Core v4.3.8.Final]
 ???
 - All aforementioned problems visualised (Big Ball of Mud, everything is interconneted, structure is completely ad-hoc). 
-- No guidelines , you really have to understand everything together. WHERE TO PUT NEW CONCEPT?
-- Visual thinking is very effective. Visual relationship must be obvious and occurate, otheriwse I have to go back and forth to understand the idea. You can’t build simple mental model (to base your assumptions upon) with spaghetti structure. 
+- No guidelines , you really have to understand everything together. WHERE TO PUT NEW CONCEPT? HOW IT RELATED TO OTHERS?
 
 ---
 class: nopadding, whitebg
@@ -266,7 +266,8 @@ class: nopadding, whitebg
 background-image: url(spring.png)
 ### .spanny[Spring v4.1.6]
 ???
-More 12.5 years of successful framework evolution without big-bang rewrites. I wish your app lived that long.
+- Dependencies are obvious and occurate. Now I can build simple mental model by looking at that kind of structure.
+- More 12.5 years of successful framework evolution without big-bang rewrites. I wish your app lived that long.
 
 ---
 # Principles.
@@ -350,7 +351,8 @@ io.**shwitter**.**timeline**             (part of)
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(applesoranges.jpg)
 # Use packages to group functionally-related artifacts. Do not group artifacts that do the same thing, but are different by nature.
-
+???
+- Prefer FUNCTIONAL COHESION over LOGICAL COHESION.
 ---
 class: packages
 <pre>
@@ -362,69 +364,6 @@ io.shwitter.exceptions
 </pre>
 ???
 Screaming architecture :)
-
----
-class: packages
-<pre>
-io.shwitter.**controller**
-io.shwitter.dao
-io.shwitter.domain
-io.shwitter.services
-io.shwitter.exceptions
-
-**UserController**, **TimelineController**...
-</pre>
-&nbsp;
-
----
-class: packages
-<pre>
-io.shwitter.controller
-io.shwitter.**dao**
-io.shwitter.domain
-io.shwitter.services
-io.shwitter.exceptions
-
-**UserDAO**, **TimelineDAO**...
-</pre>
-&nbsp;
-
----
-class: packages
-<pre>
-io.shwitter.controller
-io.shwitter.dao
-io.shwitter.**domain**
-io.shwitter.services
-io.shwitter.exceptions
-
-**User**, **Timeline**...
-</pre>
-&nbsp;
-
----
-class: packages
-<pre>
-io.shwitter.controller
-io.shwitter.dao
-io.shwitter.domain
-io.shwitter.**services**
-io.shwitter.exceptions
-
-**RegistrationService**, **TimelineService**...
-</pre>
-&nbsp;
-
----
-class: packages
-<pre>
-io.shwitter.controller
-io.shwitter.dao
-io.shwitter.domain
-io.shwitter.services
-io.shwitter.**exceptions**
-</pre>
-&nbsp;
 
 ---
 class: packages
@@ -441,28 +380,9 @@ io.shwitter.user.registration
 io.shwitter.user.profile
 io.shwitter.timeline  
 </pre>
-
----
-class: packages
-<pre class="fade">
-io.shwitter.controller
-io.shwitter.dao
-io.shwitter.domain
-io.shwitter.services
-io.shwitter.exceptions
-
-</pre>
-<pre>
-io.shwitter.**user**
-io.shwitter.user.registration
-io.shwitter.user.profile
-io.shwitter.timeline  
-
-**User**, **UserDAO**, **UserController**...
-</pre>&nbsp;
+&nbsp;
 ???
-- Prefer FUNCTIONAL COHESION over LOGICAL COHESION.
-- Functional components are not visible at all. How to find relations between functional items? Let's say, what does it take to move Timelines to a separate micro-service?
+- Functional components are now visible. How to find relations between functional items? Let's say, what does it take to move Timelines to a separate micro-service?
 - Discovery cost (Bug is within Timelines -> go to timeline. Don't have to collect all parts of Timeline by jumping among packages)
 - Comprehensibility (should study one thing at a time. Do you want to study all DAOs or Timeline?)
 
@@ -471,33 +391,47 @@ background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(c
 # Group tightly coupled classes together. If classes that change together are in the same package, then the impact of change is localized. 
 # - **The Common Closure Principle**
 ???
-Shotgun surgery instead of localized changes (imagine I move user somewhere). 
-Imagine I put a class that changes frequently into unrelated package. It will change every time as well!
-- I go here I go there.
-- Feel comfortable when you see boundary around my changes.
-- GO AND CHANGE ALL THE REPOSITORSI! NO!
-
----
-background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(escape.jpg)
-# Make sure artifacts are put in the right places and do not escape.
-???
-- Structure design
-- Structure review
-- Even in "perfect design", artifacts tend to escape their packages due to human mistakes, time pressure, whataever, so you need tooling.
-
+- How often do you change all repositories together? Never! Mostly because they are coupled. Why do you keep them together than?
+- How often do you change user together with related repository and services? Often! Because they are coupled!
+- If I don't group tighly coupled classes together, I go here I go there. SHOTGUN CHANGE.
+- By keeping coupled things together you make changes LOCALISED and much COMFORTABLE, especially when a group of classes is decoupled from the rest of the app.
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(waste.gif)
 # Make packages highly cohesive by following Single Responsibility Principle.
 ???
-- Prefer having a lot of small cohesive packages are better than a bunch of big packages (FLEXIBILITY)
+- Prefer having a lot of small cohesive packages are better than a bunch of big packages:
+- FLEXIBILITY (manage dependencies easier)
+- MUCH MORE INSIGHT ABOUT THE SYSTEM
+
+---
+class: packages
+<pre>
+io.shwitter.user.registration
+io.shwitter.user.notifications
+io.shwitter.user.profile
+io.shwitter.user.profile.blocking
+</pre>
+
+---
+class: packages
+<pre class="fade">
+io.shwitter.user.registration
+io.shwitter.user.notifications
+io.shwitter.user.profile
+io.shwitter.user.profile.blocking
+</pre>
+<pre>
+io.shwitter.user :(
+</pre>
+&nbsp;
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(rope.jpg)
 # Keep packages loosely coupled, ideally – completely independent. Reflection doesn’t count.
 ???
-- I gain portability!!! (you can move packages easily -> less afferent/efferent coupling)
 - Reflection - by making dependnecy explicit you DECOUPLE components.
+- WHY? I gain portability!!! (you can move packages easily -> less afferent/efferent coupling)
 - For example, when mapping relationships, map using ID instead of Entity.
 
 ---
@@ -540,7 +474,7 @@ class: packages
   }
 ```
 ???
-- Two concepts now are deeply connected. Now I can overuse User in timeline context.
+- Two concepts now are deeply connected. Now I can overuse User in timeline context  (Murphy's law: IF PROGRAMMER CAN OVERUSE, HE WILL)
 - Embeddable are important! Not just LONG. We still want to make sure relationship is visible.
 
 
@@ -548,21 +482,24 @@ class: packages
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(iceberg.jpg)
 # Provide slim package interface and hide implementation details.
 ???
-Be conservative in what you expose.
-Make classes package-private (@Component)
-Introduce factories that hide implementations (Dependency Injection, Service Locators etc.)
-Separate “api” from “internal” packages and restrict access to “internal”
-Murphy’s law on being conservative exposers: if programmer can, he will (don’t expose Client to others). From the other hand, it’s more complex + refactoring is supported within app. So doesn’t make sense.
+- Be conservative in what you expose.
+- It's about conciously applying what you already know:
+- Make classes package-private (@Component)
+- Expose only interface, and use Dependency Injection to internal implementation
+- Separate “api” from “internal” packages like Guava does. Restrict access to "internal" is restricted.
+- Hide implementation details behind factories like Guava does.
 
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(magnets.png)
 # Avoid dependency magnets. Sometimes duplication is not that evil.
 ???
-- Utilities (they tend to grow and become not as generic as they intented to be). 
-- Utilities (different teams using the same utilities - diff coding styles, diff library versions, different vision)
-E.g. Client is used everywhere! Consider creating different representations of client. Ideally client can have different forms: Visitor, Follower, Followee, Commenter, Recipient... and you pass representations to the right place.
-Break client into smaller parts.
+- Utilities (they tend to grow and become not as generic as they intented to be since clients has different requirements on utilities). 
+- Utilities Module (different teams using the same utilities - diff coding styles, diff library versions, different vision)
+- Time spent on maintaining "generic" utilities can be greater than having few different.
+
+- Client is used everywhere! Depending on context, client can have different facets: Visitor, Follower, Followee, Commenter, Recipient... and you pass representations to corresponding contexts.
+- Break client into smaller parts (compose a Client from smaller classes and pass only necessary parts to consumers)
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(arrows.png)
@@ -598,7 +535,7 @@ class: nopadding, whitebg, findbugs
 ![](findbugs14.png)
 ???
 - Since Findbugs is relatively simple and monotone tool, consequenes are not dangerous.
-- If you work on imporatant application which need to evolve fast and predictivly - you can get into serious troubles.
+- If you work on long-living business app portfolio - you can get into serious troubles.
 
 ---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(tailchase.jpg)
