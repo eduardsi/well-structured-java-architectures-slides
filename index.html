@@ -387,6 +387,75 @@ io.shwitter.timeline
 - Comprehensibility (should study one thing at a time. Do you want to study all DAOs or Timeline?)
 
 ---
+background-image:url(cantsee.jpeg)
+
+---
+class: inverse
+## - Ability to distribute your layers over multiple physical tiers (ha-ha)
+
+---
+class: inverse
+## - .fade[Ability to distribute your layers over multiple physical tiers (ha-ha)]
+## - Decoupling / abstracting for exhangeability (ha-ha)
+
+---
+class: inverse
+## - .fade[Ability to distribute your layers over multiple physical tiers (ha-ha)]
+## - .fade[Decoupling / abstracting for exhangeability (ha-ha)]
+## - Decoupling / abstracting for independent evolution (ha-ha)
+
+---
+class: inverse
+## - .fade[Ability to distribute your layers over multiple physical tiers (ha-ha)]
+## - .fade[Decoupling / abstracting for exhangeability (ha-ha)]
+## - .fade[Decoupling / abstracting for independent evolution (ha-ha)]
+## - Decoupling for reuse (ha-ha)
+
+---
+class: inverse
+## - .fade[Ability to distribute your layers over multiple physical tiers (ha-ha)]
+## - .fade[Decoupling / abstracting for exhangeability (ha-ha)]
+## - .fade[Decoupling / abstracting for independent evolution (ha-ha)]
+## - .fade[Decoupling for reuse (ha-ha)]
+## - Separation of concerns (is particular layer our concern?)
+???
+In reality our concerns get scattered among different layers.
+
+---
+class: inverse
+## - .fade[Ability to distribute your layers over multiple physical tiers (ha-ha)]
+## - .fade[Decoupling / abstracting for exhangeability (ha-ha)]
+## - .fade[Decoupling / abstracting for independent evolution (ha-ha)]
+## - .fade[Decoupling for reuse (ha-ha)]
+## - .fade[Separation of concerns (is particular layer our concern?)]
+## - Related stuff co-location (are DAOs really related?)
+
+---
+class: inverse
+## - .fade[Ability to distribute your layers over multiple physical tiers (ha-ha)]
+## - .fade[Decoupling / abstracting for exhangeability (ha-ha)]
+## - .fade[Decoupling / abstracting for independent evolution (ha-ha)]
+## - .fade[Decoupling for reuse (ha-ha)]
+## - .fade[Separation of concerns (is particular layer our concern?)]
+## - .fade[Related stuff co-location (are DAOs really related?)]
+## - Constraint enforcement (is there a better way?)
+???
+- UI shouldn't execute SQLs
+- Makes sense, but if we'll create layer for every constraint we'll crush under heavy lasagna layers.
+
+---
+class: center, middle, inverse
+# Apply **service-oriented** mindset to software structure.
+
+---
+class: center, middle, inverse
+# Layering is your service's **detail** and is **internal** to the service.
+???
+- Consider letting services to choose their own layering
+- Different services might require different layering or no layers at all.
+- If your services require different layering, maybe it's time to split your app?
+
+---
 background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(chain.jpg)
 # Group tightly coupled classes together. If classes that change together are in the same package, then the impact of change is localized. 
 # - **The Common Closure Principle**
@@ -810,49 +879,6 @@ interface EmailHolder  {
 
 ---
 # Tools
-
----
-background-image: url(macker.png)
-
----
-class: whitebg, nopadding, packages
-## .spanny[Macker example]
-```xml
-<?xml version="1.0"?>
-<macker>    
-    <ruleset name="Simple example">
-        <access-rule>
-            <deny>
-                <from class="**Print*" />
-                <to class="java.**" />
-            </deny>
-        </access-rule>
-    </ruleset>
-</macker>
-```
----
-background-image: url(classycle.png)
-
----
-class: whitebg, nopadding, packages
-## .spanny[Classycle example]
-```xml
-#
-# This is an example of a dependency definition file
-#
-show allResults
-
-{package} = classycle
-
-[util] = ${package}.util.*
-[non-util] = ${package}.* excluding [util]
-[class-file] = ${package}.classfile.*
-
-check sets [util] [non-util] [class-file]
-
-check [util] independentOf [non-util]
-check [class-file] independentOf [util]
-```
 
 ---
 background-image: url(veripacks.png)
